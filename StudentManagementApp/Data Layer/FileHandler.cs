@@ -145,7 +145,7 @@ namespace StudentManagementApp.Data_Layer
         }
 
         
-        public void SaveSummaryToFile(int totalStudents, double averageAge)
+        public void SaveSummaryToFile(int totalStudents, double averageAge) //Save students information to summary.txt file
         {
             using (StreamWriter writer = new StreamWriter(SummaryFile, false))
             {
