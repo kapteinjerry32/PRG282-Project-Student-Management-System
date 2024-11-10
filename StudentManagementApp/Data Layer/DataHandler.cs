@@ -244,7 +244,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void DeleteMod(Module module)
+        public void DeleteMod(Module module)//Deletes chosen module
         {
             string query = $"DELETE FROM Module WHERE moduleCode = '{module.ModuleCode}'";
 
