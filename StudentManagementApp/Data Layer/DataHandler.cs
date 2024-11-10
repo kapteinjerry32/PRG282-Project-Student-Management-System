@@ -221,7 +221,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void UpdateMod(Module module)
+        public void UpdateMod(Module module)//Updates model to new module
         {
             string query = $"UPDATE Module SET moduleCode = '{module.ModuleCode}', moduleName = '{module.ModuleName}', moduleDesc = '{module.ModuleDesc}', resources = '{module.Resources}' WHERE moduleCode = '{module.ModuleCode}'";
 
