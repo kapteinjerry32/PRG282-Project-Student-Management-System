@@ -13,169 +13,276 @@ namespace StudentManagementApp.Data_Layer
     internal class FileHandler
     {
         private const string UserFile = "UserFile.txt";
+        private const string StudentFile = "students.txt";
+        private const string SummaryFile = "summary.txt";
 
         public void WriteToFile(string email, string password)
         {
-            using (StreamWriter writer = new StreamWriter(UserFile, true))
+            try
             {
-                writer.WriteLine(email + "," + password);
-                writer.Close();
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
+                {
+                    throw new ArgumentException("Email or password cannot be null or empty.");
+                }
+
+                using (StreamWriter writer = new StreamWriter(UserFile, true))
+                {
+                    writer.WriteLine(email + "," + password);
+                    writer.Close();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while writing to file: {ex.Message}");
             }
         }
 
         public string ReadFromFile(string email, string password)
         {
-            List<string> lines = new List<string>();
-            lines = File.ReadAllLines(UserFile).ToList();
-
-            foreach (string line in lines)
+            try
             {
-                string[] parts = line.Split(',');
-                if (parts.Length == 2)
+                if (string.IsNullOrEmpty(email) || string.IsNullOrEmpty(password))
                 {
-                    if (parts[0] == email)
-                    {
-                        if (parts[1] == password)
-                        {
-                            return "Successfull";
-                        }
-                        else
-                        {
-                            return "Incorrect Password";
-                        }
-                    }
+                    throw new ArgumentException("Email or password cannot be null or empty.");
                 }
-            }
-            return "Incorrect Email";
-        }
 
-        private const string StudentFile = "students.txt";
+                List<string> lines = new List<string>();
+                lines = File.ReadAllLines(UserFile).ToList();
 
-        public DataTable ReadAllStudents()
-        {
-            DataTable studentTable = new DataTable();
-            studentTable.Columns.Add("StudentNumber");
-            studentTable.Columns.Add("Name");
-            studentTable.Columns.Add("Surname");
-            studentTable.Columns.Add("DateOfBirth");
-            studentTable.Columns.Add("Age");
-            studentTable.Columns.Add("Gender");
-            studentTable.Columns.Add("Phone");
-            studentTable.Columns.Add("Address");
-
-            if (File.Exists(StudentFile))
-            {
-                var lines = File.ReadAllLines(StudentFile);
                 foreach (string line in lines)
                 {
                     string[] parts = line.Split(',');
-                    if (parts.Length == 8)  
+                    if (parts.Length == 2)
                     {
-                        studentTable.Rows.Add(parts);
+                        if (parts[0] == email)
+                        {
+                            if (parts[1] == password)
+                            {
+                                return "Successful";
+                            }
+                            else
+                            {
+                                return "Incorrect Password";
+                            }
+                        }
                     }
                 }
+                return "Incorrect Email";
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while reading the file: {ex.Message}");
+                return "Error occurred during authentication.";
+            }
+        }
 
-            return studentTable;
+        public DataTable ReadAllStudents()
+        {
+            try
+            {
+                DataTable studentTable = new DataTable();
+                studentTable.Columns.Add("StudentNumber");
+                studentTable.Columns.Add("Name");
+                studentTable.Columns.Add("Surname");
+                studentTable.Columns.Add("DateOfBirth");
+                studentTable.Columns.Add("Age");
+                studentTable.Columns.Add("Gender");
+                studentTable.Columns.Add("Phone");
+                studentTable.Columns.Add("Address");
+
+                if (File.Exists(StudentFile))
+                {
+                    var lines = File.ReadAllLines(StudentFile);
+                    foreach (string line in lines)
+                    {
+                        string[] parts = line.Split(',');
+                        if (parts.Length == 8)
+                        {
+                            studentTable.Rows.Add(parts);
+                        }
+                    }
+                }
+                else
+                {
+                    throw new FileNotFoundException("Student file not found.");
+                }
+
+                return studentTable;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while reading students: {ex.Message}");
+                return new DataTable(); // Return empty DataTable in case of error
+            }
         }
 
         public void WriteStudentToFile(Student student)
         {
-            using (StreamWriter writer = new StreamWriter(StudentFile, true))
+            try
             {
-                writer.WriteLine($"{student.StudentNumber},{student.FirstName},{student.LastName},{student.DateOfBirth:yyyy-MM-dd},{student.Age},{student.Gender},{student.Phone},{student.Address}");
+                if (student == null)
+                {
+                    throw new ArgumentNullException(nameof(student), "Student cannot be null.");
+                }
+
+                using (StreamWriter writer = new StreamWriter(StudentFile, true))
+                {
+                    writer.WriteLine($"{student.StudentNumber},{student.FirstName},{student.LastName},{student.DateOfBirth:yyyy-MM-dd},{student.Age},{student.Gender},{student.Phone},{student.Address}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while writing student data: {ex.Message}");
             }
         }
 
         public void UpdateStudentInFile(Student updatedStudent)
         {
-            if (!File.Exists(StudentFile)) return;
-
-            var lines = File.ReadAllLines(StudentFile).ToList();
-            for (int i = 0; i < lines.Count; i++)
+            try
             {
-                var parts = lines[i].Split(',');
-                if (parts.Length == 8 && int.TryParse(parts[0], out int studentNumber) && studentNumber == updatedStudent.StudentNumber)
+                if (!File.Exists(StudentFile))
                 {
-                    lines[i] = $"{updatedStudent.StudentNumber},{updatedStudent.FirstName},{updatedStudent.LastName},{updatedStudent.DateOfBirth:yyyy-MM-dd},{updatedStudent.Age},{updatedStudent.Gender},{updatedStudent.Phone},{updatedStudent.Address},{updatedStudent.Course}";
-                    break;
+                    throw new FileNotFoundException("Student file not found.");
+                }
+
+                var lines = File.ReadAllLines(StudentFile).ToList();
+                bool studentUpdated = false;
+                for (int i = 0; i < lines.Count; i++)
+                {
+                    var parts = lines[i].Split(',');
+                    if (parts.Length == 8 && int.TryParse(parts[0], out int studentNumber) && studentNumber == updatedStudent.StudentNumber)
+                    {
+                        lines[i] = $"{updatedStudent.StudentNumber},{updatedStudent.FirstName},{updatedStudent.LastName},{updatedStudent.DateOfBirth:yyyy-MM-dd},{updatedStudent.Age},{updatedStudent.Gender},{updatedStudent.Phone},{updatedStudent.Address},{updatedStudent.Course}";
+                        studentUpdated = true;
+                        break;
+                    }
+                }
+
+                if (studentUpdated)
+                {
+                    File.WriteAllLines(StudentFile, lines);
+                }
+                else
+                {
+                    throw new InvalidOperationException("Student not found in file.");
                 }
             }
-
-            File.WriteAllLines(StudentFile, lines);
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while updating student data: {ex.Message}");
+            }
         }
 
         public void DeleteStudentFromFile(int studentNumber)
         {
-            if (!File.Exists(StudentFile)) return;
-
-            var lines = File.ReadAllLines(StudentFile).ToList();
-            lines = lines.Where(line =>
+            try
             {
-                var parts = line.Split(',');
-                return !(parts.Length == 8 && int.TryParse(parts[0], out int number) && number == studentNumber);
-            }).ToList();
+                if (!File.Exists(StudentFile))
+                {
+                    throw new FileNotFoundException("Student file not found.");
+                }
 
-            File.WriteAllLines(StudentFile, lines);
+                var lines = File.ReadAllLines(StudentFile).ToList();
+                lines = lines.Where(line =>
+                {
+                    var parts = line.Split(',');
+                    return !(parts.Length == 8 && int.TryParse(parts[0], out int number) && number == studentNumber);
+                }).ToList();
+
+                File.WriteAllLines(StudentFile, lines);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while deleting student data: {ex.Message}");
+            }
         }
-
-        private const string SummaryFile = "summary.txt";
 
         public (int TotalStudents, double AverageAge) CalculateSummary()
         {
-            int totalStudents = 0;
-            int totalAge = 0;
-
-            if (File.Exists(StudentFile))
+            try
             {
-                var lines = File.ReadAllLines(StudentFile);
-                foreach (string line in lines)
+                int totalStudents = 0;
+                int totalAge = 0;
+
+                if (File.Exists(StudentFile))
                 {
-                    string[] parts = line.Split(',');
-                    if (parts.Length == 8 && int.TryParse(parts[4], out int age)) 
+                    var lines = File.ReadAllLines(StudentFile);
+                    foreach (string line in lines)
                     {
-                        totalStudents++;
-                        totalAge += age;
+                        string[] parts = line.Split(',');
+                        if (parts.Length == 8 && int.TryParse(parts[4], out int age))
+                        {
+                            totalStudents++;
+                            totalAge += age;
+                        }
                     }
                 }
-            }
+                else
+                {
+                    throw new FileNotFoundException("Student file not found.");
+                }
 
-            double averageAge = totalStudents > 0 ? (double)totalAge / totalStudents : 0;
-            return (totalStudents, averageAge);
+                double averageAge = totalStudents > 0 ? (double)totalAge / totalStudents : 0;
+                return (totalStudents, averageAge);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while calculating summary: {ex.Message}");
+                return (0, 0); // Return 0 if error occurs
+            }
         }
 
-        
         public void SaveSummaryToFile(int totalStudents, double averageAge)
         {
-            using (StreamWriter writer = new StreamWriter(SummaryFile, false))
+            try
             {
-                writer.WriteLine($"Total Students: {totalStudents}");
-                writer.WriteLine($"Average Age: {averageAge:F2}");
+                using (StreamWriter writer = new StreamWriter(SummaryFile, false))
+                {
+                    writer.WriteLine($"Total Students: {totalStudents}");
+                    writer.WriteLine($"Average Age: {averageAge:F2}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while saving summary to file: {ex.Message}");
             }
         }
 
         public DataTable LoadSummaryFromFile()
         {
-            DataTable summaryTable = new DataTable();
-            summaryTable.Columns.Add("Summary Item", typeof(string));
-            summaryTable.Columns.Add("Value", typeof(string));
-
-            if (File.Exists(SummaryFile))
+            try
             {
-                var lines = File.ReadAllLines(SummaryFile);
-                foreach (string line in lines)
+                DataTable summaryTable = new DataTable();
+                summaryTable.Columns.Add("Summary Item", typeof(string));
+                summaryTable.Columns.Add("Value", typeof(string));
+
+                if (File.Exists(SummaryFile))
                 {
-                    string[] parts = line.Split(':');
-                    if (parts.Length == 2)
+                    var lines = File.ReadAllLines(SummaryFile);
+                    foreach (string line in lines)
                     {
-                        DataRow row = summaryTable.NewRow();
-                        row["Summary Item"] = parts[0].Trim();  
-                        row["Value"] = parts[1].Trim();        
-                        summaryTable.Rows.Add(row);
+                        string[] parts = line.Split(':');
+                        if (parts.Length == 2)
+                        {
+                            DataRow row = summaryTable.NewRow();
+                            row["Summary Item"] = parts[0].Trim();
+                            row["Value"] = parts[1].Trim();
+                            summaryTable.Rows.Add(row);
+                        }
                     }
                 }
+                else
+                {
+                    throw new FileNotFoundException("Summary file not found.");
+                }
+
+                return summaryTable;
             }
-            return summaryTable;
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred while loading summary from file: {ex.Message}");
+                return new DataTable(); // Return empty DataTable in case of error
+            }
         }
     }
 }
