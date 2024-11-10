@@ -58,7 +58,7 @@ namespace StudentManagementApp.Data_Layer
                         {
                             if (parts[1] == password)
                             {
-                                return "Successful";
+                                return "Successfull";
                             }
                             else
                             {
@@ -152,7 +152,7 @@ namespace StudentManagementApp.Data_Layer
                     var parts = lines[i].Split(',');
                     if (parts.Length == 8 && int.TryParse(parts[0], out int studentNumber) && studentNumber == updatedStudent.StudentNumber)
                     {
-                        lines[i] = $"{updatedStudent.StudentNumber},{updatedStudent.FirstName},{updatedStudent.LastName},{updatedStudent.DateOfBirth:yyyy-MM-dd},{updatedStudent.Age},{updatedStudent.Gender},{updatedStudent.Phone},{updatedStudent.Address},{updatedStudent.Course}";
+                        lines[i] = $"{updatedStudent.StudentNumber},{updatedStudent.FirstName},{updatedStudent.LastName},{updatedStudent.DateOfBirth:yyyy-MM-dd},{updatedStudent.Age},{updatedStudent.Gender},{updatedStudent.Phone},{updatedStudent.Address}";
                         studentUpdated = true;
                         break;
                     }
@@ -232,7 +232,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void SaveSummaryToFile(int totalStudents, double averageAge)
+        //public void SaveSummaryToFile(int totalStudents, double averageAge);
         
         public void SaveSummaryToFile(int totalStudents, double averageAge) //Save students information to summary.txt file
         {
