@@ -43,7 +43,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public DataTable FetchStudentModules(int studentNumber)
+        public DataTable FetchStudentModules(int studentNumber)//fetches particular student module based on choice of student number
         {
             string query = "SELECT Module.moduleCode, Module.moduleName, Student.firstName, Student.lastName " +
                    "FROM Module " +
