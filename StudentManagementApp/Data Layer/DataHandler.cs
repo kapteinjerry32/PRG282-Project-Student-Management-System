@@ -267,7 +267,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public DataTable SearchMod(string modCode)
+        public DataTable SearchMod(string modCode)//Search for chosen module based on the module code
         {
             string query = $"SELECT * FROM Module WHERE moduleCode = '{modCode}'";
 
