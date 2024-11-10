@@ -73,7 +73,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void RegisterStud(Student student)
+        public void RegisterStud(Student student)//Register new student and his/ her information into database 
         {
             string query = $"INSERT INTO Student VALUES" +
                 $"('{student.StudentNumber}', '{student.FirstName}', '{student.LastName}', '{student.DateOfBirth}', '{student.Age}', '{student.Gender}', '{student.Phone}', '{student.Address}')";
