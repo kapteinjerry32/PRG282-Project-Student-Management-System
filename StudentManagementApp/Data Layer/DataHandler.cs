@@ -120,7 +120,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void DeleteStud(Student student)
+        public void DeleteStud(Student student)//Deletes student based on their ID from the database
         {
             string query = $"DELETE FROM Student WHERE studentNumber = '{student.StudentNumber}'";
 
