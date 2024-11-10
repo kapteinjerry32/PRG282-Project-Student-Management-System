@@ -197,7 +197,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void RegisterMod(Module module)
+        public void RegisterMod(Module module)//Register new module 
         {
             string query = $"INSERT INTO Module VALUES" +
                 $"('{module.ModuleCode}', '{module.ModuleName}', '{module.ModuleDesc}', '{module.Resources}')";
