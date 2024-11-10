@@ -97,7 +97,7 @@ namespace StudentManagementApp.Data_Layer
             }
         }
 
-        public void UpdateStud(Student student)
+        public void UpdateStud(Student student)//modifies particular information of student 
         {
             string query = $"UPDATE Student SET studentNumber = '{student.StudentNumber}', firstName = '{student.FirstName}', lastName = '{student.LastName}', dateOfBirth = '{student.DateOfBirth}', age = '{student.Age}', gender = '{student.Gender}', phoneNumber = '{student.Phone}', address = '{student.Address}' WHERE studentNumber = '{student.StudentNumber}'";
 
