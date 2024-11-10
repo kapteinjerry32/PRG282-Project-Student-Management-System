@@ -233,6 +233,8 @@ namespace StudentManagementApp.Data_Layer
         }
 
         public void SaveSummaryToFile(int totalStudents, double averageAge)
+        
+        public void SaveSummaryToFile(int totalStudents, double averageAge) //Save students information to summary.txt file
         {
             try
             {
